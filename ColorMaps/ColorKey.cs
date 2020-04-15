@@ -2,7 +2,7 @@
 using Windows.UI;
 using Windows.ApplicationModel.Resources;
 
-namespace CatsHelpers.ColorScales
+namespace CatsHelpers.ColorMaps
 {
     /// <summary>
     /// Define a color key to build the color scale. 

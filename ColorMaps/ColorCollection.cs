@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using Windows.UI;
 using Windows.ApplicationModel.Resources;
 
-namespace CatsHelpers.ColorScales
+namespace CatsHelpers.ColorMaps
 {
 
 #pragma warning disable CS0419 // La référence de l'attribut cref est ambiguë

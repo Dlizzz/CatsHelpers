@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using Windows.UI;
 
-namespace CatsHelpers.ColorScales
+namespace CatsHelpers.ColorMaps
 {
     /// <summary>
     /// Static collection of color scales based on well-known scales  
     /// </summary>
-    public static class ColorScales
+    public static class NamedColorMaps
     {
-        private readonly static (double, double, double)[] magmaData =
+        private static readonly (double, double, double)[] magmaData =
         {
             (0.001462, 0.000466, 0.013866),
             (0.002258, 0.001295, 0.018331),
@@ -267,7 +267,7 @@ namespace CatsHelpers.ColorScales
             (0.987387, 0.984288, 0.742002),
             (0.987053, 0.991438, 0.749504)
         };
-        private readonly static (double, double, double)[] infernoData =
+        private static readonly(double, double, double)[] infernoData =
         {
             (0.001462, 0.000466, 0.013866),
             (0.002267, 0.001270, 0.018570),
@@ -526,7 +526,7 @@ namespace CatsHelpers.ColorScales
             (0.982257, 0.994109, 0.631017),
             (0.988362, 0.998364, 0.644924)
         };
-        private readonly static (double, double, double)[] plasmaData =
+        private static readonly (double, double, double)[] plasmaData =
         {
             (0.050383, 0.029803, 0.527975),
             (0.063536, 0.028426, 0.533124),
@@ -785,7 +785,7 @@ namespace CatsHelpers.ColorScales
             (0.941896, 0.968590, 0.140956),
             (0.940015, 0.975158, 0.131326)
         };
-        private readonly static (double, double, double)[] viridisData =
+        private static readonly (double, double, double)[] viridisData =
         {
             (0.267004, 0.004874, 0.329415),
             (0.268510, 0.009605, 0.335427),
@@ -1044,7 +1044,7 @@ namespace CatsHelpers.ColorScales
             (0.983868, 0.904867, 0.136897),
             (0.993248, 0.906157, 0.143936)
         };
-        private readonly static (double, double, double)[] turboData =
+        private static readonly (double, double, double)[] turboData =
         {
             (0.18995,0.07176,0.23217),
             (0.19483,0.08339,0.26149),
@@ -1308,27 +1308,27 @@ namespace CatsHelpers.ColorScales
         /// The <see cref="Magma"/> color scale <seealso href="https://github.com/BIDS/colormap/blob/master/colormaps.py"/>
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorScale Magma = new ColorScale(magmaData);
+        public readonly static ColorMap Magma = new ColorMap(magmaData);
         /// <summary>
         /// The <see cref="Inferno"/> color scale <seealso href="https://github.com/BIDS/colormap/blob/master/colormaps.py"/>
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorScale Inferno = new ColorScale(infernoData);
+        public readonly static ColorMap Inferno = new ColorMap(infernoData);
         /// <summary>
         /// The <see cref="Plasma"/> color scale <seealso href="https://github.com/BIDS/colormap/blob/master/colormaps.py"/>
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorScale Plasma = new ColorScale(plasmaData);
+        public readonly static ColorMap Plasma = new ColorMap(plasmaData);
         /// <summary>
         /// The <see cref="Viridis"/> color scale <seealso href="https://github.com/BIDS/colormap/blob/master/colormaps.py"/>
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorScale Viridis = new ColorScale(viridisData);
+        public readonly static ColorMap Viridis = new ColorMap(viridisData);
         /// <summary>
         /// The <see cref="Turbo"/> color scale <seealso href="https://ai.googleblog.com/2019/08/turbo-improved-rainbow-colormap-for.html"/>
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorScale Turbo = new ColorScale(turboData);
+        public readonly static ColorMap Turbo = new ColorMap(turboData);
 
     }
 }

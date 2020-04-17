@@ -141,8 +141,4 @@
     <value>Value must be strictly greater than 1.</value>
     <comment>Property error message.</comment>
   </data>
-  <data name="WrongColorDataArraySize" xml:space="preserve">
-    <value>Array must have 256 elements.</value>
-    <comment>Property error message.</comment>
-  </data>
 </root>

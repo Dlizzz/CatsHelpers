@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using Windows.UI;
 using Windows.ApplicationModel.Resources;
@@ -10,19 +12,18 @@ namespace CatsHelpers.ColorMaps
     /// Implement a 256 elements color scale with static data as readonly array of sRGB truples 
     /// and interpolation method to get color from scale as a double.
     /// </summary>
-    public class ColorMap
+    /// <remarks>Implement <see cref="INotifyPropertyChanged"/></remarks>
+    public class ColorMap: INotifyPropertyChanged
     {
+        #region Initialization
         // Get resource loader for the library
         private readonly ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView("CatsHelpers/ErrorMessages");
-        // Backing store for the color data
+        // Back store for the color data
         private readonly (double, double, double)[] _colorData;
+        // Store max index of _colordata for optimization
         private readonly int maxIndexColorData;
-
-        /// <summary>
-        /// Get color data as a read only collection of truples of double (sRGB) 
-        /// </summary>
-        /// <value>The collection</value>
-        public ReadOnlyCollection<(double, double, double)> ColorData => Array.AsReadOnly(_colorData);
+        // Back store for Inversed property (default to false)
+        private bool _inversed = false;
 
         /// <summary>
         /// Create the color scale from color data
@@ -45,21 +46,67 @@ namespace CatsHelpers.ColorMaps
             _colorData = colorData;
             maxIndexColorData = _colorData.GetUpperBound(0);
         }
+        #endregion
 
+        #region Properties
+        /// <summary>
+        /// Get color data as a read only collection of truples of double (sRGB) 
+        /// </summary>
+        /// <value>The collection</value>
+        public ReadOnlyCollection<(double, double, double)> ColorData => Array.AsReadOnly(_colorData);
+
+        /// <summary>
+        /// Get or set the Inversed property.
+        /// </summary>
+        /// <value>When True, the colormap is inversed.</value>
+        /// <remarks>OnInversedChanged event is triggered whenever the property is changed.</remarks>
+        public bool Inversed
+        {
+            get => _inversed;
+            set
+            {
+                _inversed = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        #region Events
+        /// <summary>
+        /// The event for property changed 
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Property changed event handler
+        /// </summary>
+        /// <param name="propertyName"><see cref="string"/> Name of the changed property (default to caller name)</param>
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+
+        #region Interpolation
         /// <summary>
         /// Get the sRGB data (truples of double) corresponding to the given position on the colormap through interpolation 
         /// </summary>
         /// <param name="position">The position on the scale</param>
-        /// <param name="inverse">If true, return the sRGB data corresponding to the inversed colormap (Optional ; Default : false)</param>
         /// <remarks><paramref name="position"/> is a percentage and must be between 0 and 1.</remarks>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="position"/> Must be in the [0 , 1] range</exception>
         /// <returns>The sRGB data as a truples of double</returns>
-        public (double, double, double) GetInterpolatedsRGB(double position, bool inverse = false)
+        public (double, double, double) GetInterpolatedsRGB(double position)
         {
             if (position < 0 || position > 1) throw new ArgumentOutOfRangeException(nameof(position), resourceLoader.GetString("ValueNotPercentage"));
 
             // Inverse the position if needed
-            if (inverse) position = 1 - position;
+            if (_inversed) position = 1 - position;
+
+            // If position equals 1, return the last color
+            if (position == 1) return _colorData[maxIndexColorData];
+            // If position equals 0, return the first color
+            if (position == 0) return _colorData[0];
 
             // Get the colors just before and after the position
             double index = position * maxIndexColorData;
@@ -84,18 +131,19 @@ namespace CatsHelpers.ColorMaps
         /// Get the <see cref="Color"/> corresponding to the given position on the colormap through interpolation 
         /// </summary>
         /// <param name="position">The position on the scale</param>
-        /// <param name="inverse">If true, return the <see cref="Color"/> corresponding to the inversed color scale (Optional ; Default : false)</param>
         /// <remarks><paramref name="position"/> is a percentage and must be between 0 and 1.</remarks>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="position"/> Must be in the [0 , 1] range</exception>
         /// <returns><see cref="Color"/> The color</returns>
-        public Color GetInterpolatedColor(double position, bool inverse = false)
+        public Color GetInterpolatedColor(double position)
         {
-            var (r, g, b) = GetInterpolatedsRGB(position, inverse);
+            var (r, g, b) = GetInterpolatedsRGB(position);
             
             // Return fully opaque color
             return ColorFromsRGB(r, g, b);
         }
+        #endregion
 
+        #region Indexed colormap
         /// <summary>
         /// Create an indexed colormap, as an array of bytes of bytes (4 bytes by color), by interpolating colors data
         /// </summary>
@@ -141,7 +189,9 @@ namespace CatsHelpers.ColorMaps
 
             return colorMap;
         }
+        #endregion
 
+        #region Conversion
         // Convert sRGB components to bytes array (4 bytes)
         private static byte[] BytesFromsRGB(double r, double g, double b)
         {
@@ -164,6 +214,7 @@ namespace CatsHelpers.ColorMaps
             // Return fully opaque color
             return Color.FromArgb(color[0], color[1], color[2], color[3]);
         }
+        #endregion
     }
 #pragma warning restore CS0419 // La référence de l'attribut cref est ambiguë
 }

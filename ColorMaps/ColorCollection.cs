@@ -24,9 +24,6 @@ namespace CatsHelpers.ColorMaps
         // Back store for ColorElements property
         private readonly List<Color> _colorElements = new List<Color>();
 
-        /// <summary>Transparent color</summary>
-        /// /// <value>Get color transparent color (all components to 0).</value>
-        public static readonly Color Transparent = new Color { A = 0, R = 0, G = 0, B = 0 };
 
         /// <summary>
         /// Create the collection with <paramref name="colorElementsCount"/> elements.
@@ -226,10 +223,10 @@ namespace CatsHelpers.ColorMaps
         private Color ComputeColor(double position)
         {
             // If there is no color key, make the full color scale transparent
-            if (colorKeys.Count == 0) return Transparent;
+            if (colorKeys.Count == 0) return NamedColorMaps.TransparentColor;
 
-            ColorKey colorSegmentStart = new ColorKey { Position = 0.0, ARGBValue = Transparent };
-            ColorKey colorSegmentEnd = new ColorKey { Position = 0.0, ARGBValue = Transparent };
+            ColorKey colorSegmentStart = new ColorKey { Position = 0.0, ARGBValue = NamedColorMaps.TransparentColor };
+            ColorKey colorSegmentEnd = new ColorKey { Position = 0.0, ARGBValue = NamedColorMaps.TransparentColor };
             bool startFound = false, endFound = false;
 
             // Find the color segment (satrt key and end key) corresponding to the position
@@ -251,7 +248,7 @@ namespace CatsHelpers.ColorMaps
             }
 
             // Position is before any color segment, return transparent
-            if (!startFound) return Transparent;
+            if (!startFound) return NamedColorMaps.TransparentColor;
             // Position is after last color segment, return last color key
             if (!endFound) return colorSegmentStart.ARGBValue;
             

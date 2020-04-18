@@ -8,7 +8,7 @@ namespace CatsHelpers.ColorMaps
     /// </summary>
     public static class NamedColorMaps
     {
-        #region Color data
+        #region Colormap data
         private static readonly (double, double, double)[] magmaData =
         {
             (0.001462, 0.000466, 0.013866),
@@ -1564,7 +1564,8 @@ namespace CatsHelpers.ColorMaps
 	        (1.000000, 1.000000, 1.000000)
         };
         #endregion
-        #region Color name
+
+        #region Colormap name
         /// <summary>
         /// The <see cref="Magma"/> colormap <seealso href="https://github.com/BIDS/colormap/blob/master/colormaps.py"/>
         /// </summary>
@@ -1596,5 +1597,18 @@ namespace CatsHelpers.ColorMaps
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
         public readonly static ColorMap Heat = new ColorMap(heatData);
         #endregion
+
+        #region Colors definition
+
+#pragma warning disable CS0419 // La référence de l'attribut cref est ambiguë
+        /// <summary>Transparent <see cref="Color"/></summary>
+        /// <value>Get color transparent color (all components to 0).</value>
+        public static readonly Color TransparentColor = new Color { A = 0, R = 0, G = 0, B = 0 };
+#pragma warning restore CS0419 // La référence de l'attribut cref est ambiguë
+        /// <summary>Transparent color as bytes array</summary>
+        /// <value>Get color transparent color (all components to 0).</value>
+        public static readonly byte[] TransparentBytes = new byte[] { 0, 0, 0, 0 };
+        #endregion
+
     }
 }

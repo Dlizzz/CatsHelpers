@@ -198,10 +198,11 @@ namespace CatsHelpers.ColorMaps
             var color = new byte[4];
 
             // Fully opaque color
-            color[0] = byte.MaxValue;
-            color[1] = Convert.ToByte(r * byte.MaxValue);
-            color[2] = Convert.ToByte(g * byte.MaxValue);
-            color[3] = Convert.ToByte(b * byte.MaxValue);
+            // Pixel format = DirectXPixelFormat.B8G8R8A8UintNormalized ; [0]: Blue ; [1]: Green ; [2]: Red ; [3]: Alpha
+            color[0] = Convert.ToByte(b * byte.MaxValue);
+            color[1] = Convert.ToByte(g * byte.MaxValue); 
+            color[2] = Convert.ToByte(r * byte.MaxValue);
+            color[3] = byte.MaxValue;
 
             return color;
         }

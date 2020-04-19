@@ -28,11 +28,13 @@ namespace CatsHelpers.ColorMaps
         /// <summary>
         /// Create the color scale from color data
         /// </summary>
+        /// <param name="name">Name of the colormap</param>
         /// <param name="colorData">An array of truples of double, with each component being between 0 and 1</param>
-        /// <exception cref="ArgumentNullException">colorData can't be null</exception>
-        public ColorMap((double, double, double)[] colorData)
+        /// <exception cref="ArgumentNullException">name or colorData can't be null</exception>
+        public ColorMap(string name, (double, double, double)[] colorData)
         {
             if (colorData == null) throw new ArgumentNullException(nameof(colorData));
+            if (name == null) throw new ArgumentNullException(nameof(name));
             foreach ((double, double, double) data in colorData)
             {
                 if (data.Item1 < 0 || data.Item1 > 1
@@ -43,6 +45,7 @@ namespace CatsHelpers.ColorMaps
                 }
             }
 
+            Name = name;
             _colorData = colorData;
             maxIndexColorData = _colorData.GetUpperBound(0);
         }
@@ -69,6 +72,11 @@ namespace CatsHelpers.ColorMaps
                 OnPropertyChanged();
             }
         }
+
+        /// <summary>
+        /// Get the name of the colormap.
+        /// </summary>
+        public string Name { get; }
         #endregion
 
         #region Events

@@ -1570,36 +1570,50 @@ namespace CatsHelpers.ColorMaps
         /// The <see cref="Magma"/> colormap <seealso href="https://github.com/BIDS/colormap/blob/master/colormaps.py"/>
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorMap Magma = new ColorMap(magmaData);
+        public readonly static ColorMap Magma = new ColorMap(nameof(Magma), magmaData);
         /// <summary>
         /// The <see cref="Inferno"/> colormap <seealso href="https://github.com/BIDS/colormap/blob/master/colormaps.py"/>
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorMap Inferno = new ColorMap(infernoData);
+        public readonly static ColorMap Inferno = new ColorMap(nameof(Inferno), infernoData);
         /// <summary>
         /// The <see cref="Plasma"/> colormap <seealso href="https://github.com/BIDS/colormap/blob/master/colormaps.py"/>
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorMap Plasma = new ColorMap(plasmaData);
+        public readonly static ColorMap Plasma = new ColorMap(nameof(Plasma), plasmaData);
         /// <summary>
         /// The <see cref="Viridis"/> colormap <seealso href="https://github.com/BIDS/colormap/blob/master/colormaps.py"/>
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorMap Viridis = new ColorMap(viridisData);
+        public readonly static ColorMap Viridis = new ColorMap(nameof(Viridis), viridisData);
         /// <summary>
         /// The <see cref="Turbo"/> colormap <seealso href="https://ai.googleblog.com/2019/08/turbo-improved-rainbow-colormap-for.html"/>
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorMap Turbo = new ColorMap(turboData);
+        public readonly static ColorMap Turbo = new ColorMap(nameof(Turbo), turboData);
         /// <summary>
         /// The <see cref="Heat"/> colormap
         /// </summary>
         /// <remarks>Get the 256 values (readonly) from ColorData property</remarks>
-        public readonly static ColorMap Heat = new ColorMap(heatData);
+        public readonly static ColorMap Heat = new ColorMap(nameof(Heat), heatData);
+        #endregion
+
+        #region Colormap dictionnary
+        /// <summary>
+        /// Colormap dictionary to iterate over colormaps
+        /// </summary>
+        public static readonly Dictionary<string, ColorMap> ColorMaps = new Dictionary<string, ColorMap>
+        {
+            { nameof(Magma), Magma },
+            { nameof(Inferno), Inferno },
+            { nameof(Plasma), Plasma },
+            { nameof(Viridis), Viridis },
+            { nameof(Turbo), Turbo },
+            { nameof(Heat), Heat }
+        };
         #endregion
 
         #region Colors definition
-
 #pragma warning disable CS0419 // La référence de l'attribut cref est ambiguë
         /// <summary>Transparent <see cref="Color"/></summary>
         /// <value>Get color transparent color (all components to 0).</value>

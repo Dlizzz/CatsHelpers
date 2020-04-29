@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using Windows.UI;
 using Windows.ApplicationModel.Resources;
+using Windows.UI.Xaml;
 
 namespace CatsHelpers.ColorMaps
 {
@@ -12,8 +13,7 @@ namespace CatsHelpers.ColorMaps
     /// Implement a 256 elements color scale with static data as readonly array of sRGB truples 
     /// and interpolation method to get color from scale as a double.
     /// </summary>
-    /// <remarks>Implement <see cref="INotifyPropertyChanged"/></remarks>
-    public class ColorMap: INotifyPropertyChanged
+    public class ColorMap: DependencyObject
     {
         #region Initialization
         // Get resource loader for the library
@@ -22,8 +22,6 @@ namespace CatsHelpers.ColorMaps
         private readonly (double, double, double)[] _colorData;
         // Store max index of _colordata for optimization
         private readonly int maxIndexColorData;
-        // Back store for Inversed property (default to false)
-        private bool _inversed = false;
 
         /// <summary>
         /// Create the color scale from color data
@@ -33,8 +31,8 @@ namespace CatsHelpers.ColorMaps
         /// <exception cref="ArgumentNullException">name or colorData can't be null</exception>
         public ColorMap(string name, (double, double, double)[] colorData)
         {
+            Name = name ?? throw new ArgumentNullException(nameof(name));
             if (colorData == null) throw new ArgumentNullException(nameof(colorData));
-            if (name == null) throw new ArgumentNullException(nameof(name));
             foreach ((double, double, double) data in colorData)
             {
                 if (data.Item1 < 0 || data.Item1 > 1
@@ -45,7 +43,6 @@ namespace CatsHelpers.ColorMaps
                 }
             }
 
-            Name = name;
             _colorData = colorData;
             maxIndexColorData = _colorData.GetUpperBound(0);
         }
@@ -59,39 +56,24 @@ namespace CatsHelpers.ColorMaps
         public ReadOnlyCollection<(double, double, double)> ColorData => Array.AsReadOnly(_colorData);
 
         /// <summary>
-        /// Get or set the Inversed property.
-        /// </summary>
-        /// <value>When True, the colormap is inversed.</value>
-        /// <remarks>OnInversedChanged event is triggered whenever the property is changed.</remarks>
-        public bool Inversed
-        {
-            get => _inversed;
-            set
-            {
-                _inversed = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
         /// Get the name of the colormap.
         /// </summary>
         public string Name { get; }
-        #endregion
-
-        #region Events
-        /// <summary>
-        /// The event for property changed 
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Property changed event handler
+        /// Inversed dependency property identifier.
         /// </summary>
-        /// <param name="propertyName"><see cref="string"/> Name of the changed property (default to caller name)</param>
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public static readonly DependencyProperty InversedProperty =
+            DependencyProperty.Register(nameof(Inversed), typeof(bool), typeof(ColorMap), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Get or set the Inversed dependency property.
+        /// </summary>
+        /// <value>When True, the colormap is inversed.</value>
+        public bool Inversed
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get { return (bool)GetValue(InversedProperty); }
+            set { SetValue(InversedProperty, value); }
         }
 
         #endregion
@@ -109,7 +91,7 @@ namespace CatsHelpers.ColorMaps
             if (position < 0 || position > 1) throw new ArgumentOutOfRangeException(nameof(position), resourceLoader.GetString("ValueNotPercentage"));
 
             // Inverse the position if needed
-            if (_inversed) position = 1 - position;
+            if (Inversed) position = 1 - position;
 
             // If position equals 1, return the last color
             if (position == 1) return _colorData[maxIndexColorData];

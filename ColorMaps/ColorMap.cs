@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using Windows.UI;
 using Windows.ApplicationModel.Resources;
-using Windows.UI.Xaml;
 
 namespace CatsHelpers.ColorMaps
 {
@@ -13,15 +12,17 @@ namespace CatsHelpers.ColorMaps
     /// Implement a 256 elements color scale with static data as readonly array of sRGB truples 
     /// and interpolation method to get color from scale as a double.
     /// </summary>
-    public class ColorMap: DependencyObject
+    public class ColorMap: INotifyPropertyChanged
     {
         #region Initialization
         // Get resource loader for the library
         private readonly ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView("CatsHelpers/ErrorMessages");
-        // Back store for the color data
+        // Backing store for the color data
         private readonly (double, double, double)[] _colorData;
         // Store max index of _colordata for optimization
         private readonly int maxIndexColorData;
+        // backing store for the Inversed public property
+        private bool _inversed;
 
         /// <summary>
         /// Create the color scale from color data
@@ -43,6 +44,7 @@ namespace CatsHelpers.ColorMaps
                 }
             }
 
+            _inversed = false;
             _colorData = colorData;
             maxIndexColorData = _colorData.GetUpperBound(0);
         }
@@ -61,21 +63,35 @@ namespace CatsHelpers.ColorMaps
         public string Name { get; }
 
         /// <summary>
-        /// Inversed dependency property identifier.
-        /// </summary>
-        public static readonly DependencyProperty InversedProperty =
-            DependencyProperty.Register(nameof(Inversed), typeof(bool), typeof(ColorMap), new PropertyMetadata(false));
-
-        /// <summary>
-        /// Get or set the Inversed dependency property.
+        /// Get or set the Inversed property.
         /// </summary>
         /// <value>When True, the colormap is inversed.</value>
         public bool Inversed
         {
-            get { return (bool)GetValue(InversedProperty); }
-            set { SetValue(InversedProperty, value); }
+            get => _inversed;
+            set 
+            {
+                if (value == _inversed) return;
+                _inversed = value;
+                NotifyPropertyChanged();
+            }
         }
+        #endregion
 
+        #region Events
+        /// <summary>
+        /// Property changed event
+        /// </summary>
+        /// <remarks>Implemented for Inversed property</remarks>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // This method is called by the Set accessor of each property.  
+        // The CallerMemberName attribute that is applied to the optional propertyName  
+        // parameter causes the property name of the caller to be substituted as an argument.  
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         #endregion
 
         #region Interpolation
@@ -91,7 +107,7 @@ namespace CatsHelpers.ColorMaps
             if (position < 0 || position > 1) throw new ArgumentOutOfRangeException(nameof(position), resourceLoader.GetString("ValueNotPercentage"));
 
             // Inverse the position if needed
-            if (Inversed) position = 1 - position;
+            if (_inversed) position = 1 - position;
 
             // If position equals 1, return the last color
             if (position == 1) return _colorData[maxIndexColorData];
